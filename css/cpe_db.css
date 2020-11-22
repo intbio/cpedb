@@ -1,0 +1,30 @@
+
+td.details-control {
+	width: 30px;
+    height: 30px;
+    background: url('../images/plus.png') no-repeat center center;
+	background-size: 30px;
+    cursor: pointer;
+}
+tr.shown td.details-control {
+	width: 30px;
+    height: 30px;
+    background: url('../images/minus.png') no-repeat center center;
+	background-size: 30px;
+}
+
+
+.tooltip-inner{
+    max-width:200px;
+    padding:1px 1px;
+    background-color:#AAAAAA;
+    text-align:center;
+    text-decoration:none;
+
+    border-radius:5px
+}
+
+.tooltip.bottom .tooltip-arrow{
+	border-bottom-color:#AAAAAA;
+}
+
