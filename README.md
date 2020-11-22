@@ -1,5 +1,7 @@
 # Chemical Penetration Enhancer Database
-## Welcome to CPE DB, the curated database of chemical penetration enhancers!
+## Welcome to CPE DB, the curated database of chemical penetration enhancers GIT!
+
+[WEB version](http://intbio.org/cpedb/)
 
 ## Contributors:
 - Marine Bozdaganyan — Project leader
@@ -8,8 +10,3 @@
 - Grigoriy Armeev — Technical Management
 ## How to cite: 
 preparation for publication
-<html>
-<link rel="stylesheet" type="text/css" href="DataTables/datatables.min.css"/>
- 
-<script type="text/javascript" src="DataTables/datatables.min.js"></script>
-</html>
