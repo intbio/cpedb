@@ -28,3 +28,17 @@ tr.shown td.details-control {
 	border-bottom-color:#AAAAAA;
 }
 
+.dt-button-collection{
+	display: block;
+    height: 0px !important;
+	width: 0px !important;
+	padding:0px 0px !important;
+    overflow-y: scroll !important;
+}
+.dtsb-searchBuilder{
+	width: 80vw !important;
+	position: absolute;
+	padding: 5px 5px !important;
+    top: -300px !important;
+    left: 0;
+}

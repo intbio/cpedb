@@ -13,6 +13,9 @@
 	
 	<link rel="stylesheet" type="text/css" href="DataTables/Bootstrap-3.3.7/css/bootstrap.min.css"/>	
 	<link rel="stylesheet" type="text/css" href="DataTables/datatables.min.css"/> 
+	<link rel="stylesheet" type="text/css" href="DataTables/SearchBuilder-1.0.0/css/searchBuilder.dataTables.min.css"/>
+	<link rel="stylesheet" type="text/css" href="DataTables/Buttons-1.6.5/css/buttons.dataTables.min.css"/> 
+	
 
 	<link rel="stylesheet" type="text/css" href="css/cpe_db.css"/>
 
@@ -73,6 +76,40 @@
 				<th>Scaffold SMILES</th>
             </tr>
         </thead>
+		<tfoot>
+            <tr>
+                <th></th>
+                <th>Name</th>
+				<th>SMILES</th>
+				<th>PubChemID</th>
+				<th>CPE CLASS</th>
+				<th>IUPAC NAME</th>
+				<th>CAS</th>
+				<th>CAS (cactus)</th>
+				<th>logKp</th>
+				<th>Reference</th>
+				<th>Total Molweight</th>
+				<th>cLogP</th>
+				<th>cLogS</th>
+				<th>H-Acceptors</th>
+				<th>H-Donors</th>
+				<th>Polar Surface Area</th>
+				<th>Rotatable Bonds</th>
+				<th>Aromatic Rings</th>
+				<th>sp3-Atoms</th>
+				<th>Drug status</th>
+				<th>DRUGBANK</th>
+				<th>tag1</th>
+				<th>tag2</th>
+				<th>tag3</th>
+				<th>tag4</th>
+				<th>tag5</th>
+				<th>tag6</th>
+				<th>tag7</th>
+				<th>tag8 (SCAFFOLD name)</th>
+				<th>Scaffold SMILES</th>
+            </tr>
+        </tfoot>
     </table>
     <div id="tooltip"></div>
     </div><!-- /.container -->
@@ -87,6 +124,9 @@
 	<script type="text/javascript" src="DataTables/jQuery-3.3.1/jquery-3.3.1.min.js"></script>
 	<script type="text/javascript" src="DataTables/Bootstrap-3.3.7/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="DataTables/datatables.min.js"></script>
+	<script type="text/javascript" src="DataTables/SearchBuilder-1.0.0/js/datatables.searchBuilder.min.js"></script>
+	<script type="text/javascript" src="DataTables/Buttons-1.6.5/js/dataTables.buttons.min.js"></script>
+	
 
 	
 
@@ -158,6 +198,7 @@
 }
 	
 	$(document).ready(function() {
+	
 	
     var table =$('#example').DataTable( {
         "ajax": "data/db.json",
@@ -253,7 +294,23 @@
 							"searchable": true
 						}
 					],
-    } );
+				dom: 'Blfrtip',
+				buttons: [
+					'copy', 'csv',
+					{
+						extend: 'searchBuilder',
+						config: {
+							columns: [4,8,10,11,12,13,14,15,16,17,18]
+						}
+					}
+				],
+				
+				
+
+					
+    
+	} );
+	
 	
 	$('#example tbody').on('click', 'td.details-control', function () {
         var tr = $(this).closest('tr');
