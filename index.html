@@ -76,7 +76,7 @@
 				<th>tag5</th>
 				<th>tag6</th>
 				<th>tag7</th>
-				<th>tag8 (SCAFFOLD name)</th>
+				<th>SCAFFOLD name</th>
 				<th>Scaffold SMILES</th>
             </tr>
         </thead>
@@ -110,7 +110,7 @@
 				<th>tag5</th>
 				<th>tag6</th>
 				<th>tag7</th>
-				<th>tag8 (SCAFFOLD name)</th>
+				<th>SCAFFOLD name</th>
 				<th>Scaffold SMILES</th>
             </tr>
         </tfoot>
@@ -129,8 +129,8 @@
 	<script type="text/javascript" src="DataTables/Bootstrap-3.3.7/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="DataTables/datatables.min.js"></script>
 	<!-- <script type="text/javascript" src="DataTables/SearchBuilder-1.0.0/js/datatables.searchBuilder.min.js"></script> -->
-<!-- 	https://github.com/reymond-group/smilesDrawer -->
 	<script type="text/javascript" src="DataTables/Buttons-1.6.5/js/dataTables.buttons.min.js"></script>
+	<script type="text/javascript" src="js/smiles-drawer.min.js"></script>
 	
 
     <script type="text/javascript">
@@ -146,10 +146,24 @@
 	
 	function format ( d ) {
     // `d` is the original data object for the row
+	var i;
+	var tag_string = '';
+	for (i = 1; i < 8; i++) {
+	  tag_string += (d['tag'+i]!=null ? d['tag'+i]+', ' : '');
+	}
     return '<table class="table table-striped table-bordered" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
         '<tr>'+
             '<td><b>IUPAC NAME:</b></td>'+
             '<td colspan="5">'+d['IUPAC NAME']+'</td>'+
+        '</tr>'+
+		'<tr>'+
+            '<td><b>smiles:</b></td>'+
+            '<td colspan="5">'+'<canvas data-smiles="'+ d.SMILES +'"></canvas>'+'</td>'+
+        '</tr>'+
+
+		'<tr>'+
+            '<td><b>Tags:</b></td>'+
+            '<td colspan="5">'+tag_string+'</td>'+
         '</tr>'+
 		'<tr>'+
             '<td><b>Total molecular weight:</b></td>'+
@@ -180,9 +194,11 @@
         '</tr>'+
 		'<tr>'+
             '<td><b>Drug status:</b></td>'+
-            '<td>'+d['Aromatic Rings']+'</td>'+
-			'<td><b>DRUGBANK:</b></td>'+
-            '<td colspan="3">'+d['DRUGBANK']+'</td>'+
+            '<td>'+(d['Drug status']!=null ? d['Drug status'] : 'No data')+'</td>'+
+			'<td><b>DRUGBANK ID:</b></td>'+
+            '<td >'+ (d['DRUGBANK']!=null ? d['DRUGBANK'] : 'No data') +'</td>'+
+			'<td><b>Scaffold name:</b></td>'+
+            '<td >'+ (d['tag8 (SCAFFOLD name)']!=null ? d['tag8 (SCAFFOLD name)'] : 'No data') +'</td>'+
         '</tr>'+
 		
 		'<tr>'+
@@ -191,7 +207,7 @@
         '</tr>'+
     '</table>';
 }
-	
+	let popup = new SmilesDrawer.Drawer({ width: 200, height: 200 });
 	$(document).ready(function() {
 	
 	
@@ -223,7 +239,7 @@
 			{ "data": "Aromatic Rings" },
 			{ "data": "sp3-Atoms" },
 			{ "data": "Drug status" },
-			{ "data": "DRUGBANK" },
+			{ "data": "DRUGBANK"},
 			{ "data": "tag1" },
 			{ "data": "tag2" },
 			{ "data": "tag3" },
@@ -240,12 +256,23 @@
 		"initComplete": function(settings, json) {
 			$('[data-toggle="tooltip"]').tooltip({
 			  class: "tooltip-main",
-			  animation: false,
+			  animation: true,
 			  html: true,
-			  delay: {show: 300, hide: 100}
-			});
+			  delay: {show: 300, hide: 100},
+			})
+			$('[data-toggle="tooltip"]').on('shown.bs.tooltip', function () {
+			    console.log(this.getAttribute('smiles'));
+				var smiles=this.getAttribute('smiles');
+				var id='tooltip_canvas_'+this.getAttribute('row');
+				SmilesDrawer.parse(smiles, function (tree) {
+					popup.draw(tree, id, 'light', false);
+				}, function (err) {
+					console.log(err);
+				})
+			})
+
 		},
-		"columnDefs": [
+		"columnDefs": [ { "targets": '_all', "defaultContent": ""},
 						{ orderable: true, className: 'reorder', targets: [1,8] },
 						{ orderable: false, targets: '_all' },
 						{
@@ -254,7 +281,7 @@
 							{
 							if ( 'display' === type ) 
 							{ 
-								data = '<a data-toggle="tooltip" data-placement="bottom" title="<img class=\'img-thumbnail mx-auto d-block float-left\' src=\'https://cactus.nci.nih.gov/chemical/structure/'+ row.SMILES +'/image\'>">'+data+'</a>' } 
+								data = '<a data-toggle="tooltip" data-placement="bottom" smiles="'+row.SMILES+'" row="'+meta.row+'" title="<canvas id=\'tooltip_canvas_' +meta.row+'\'></canvas>">'+data+'</a>' } 
 								return data; 
 							}
 						},
@@ -292,7 +319,7 @@
 							"searchable": true
 						}
 					],
-				dom: 'Blfritp',
+				dom: 'Blfr<"toolbar">itp',
 				language: {
 					searchBuilder: {
 						button: 'Advanced Search (%d conditions)',
@@ -305,7 +332,7 @@
 						extend: 'searchBuilder',
 						config: {
 						
-							columns: [4,8,10,11,12,13,14,15,16,17,18]
+							columns: [4,8,10,11,12,13,14,15,16,17,18,28]
 						}
 					}
 				],
@@ -315,8 +342,46 @@
 					
     
 	} );
+
+
 	
+	$("div.toolbar").html('<div>Search by tag:</div>'+
+							'<div class="btn-group btn-group-xs" id="tag_group">'+
+							
+							  '<label class="btn btn-info buttons-copy buttons-html5">'+
+								'<input type="checkbox" name="amide" id="tag1" autocomplete="off"> Amide'+
+							  '</label>'+
+							  
+							  '<label class="btn btn-info buttons-copy buttons-html5">'+
+								'<input type="checkbox" name="amine" id="tag2" autocomplete="off"> Amine'+
+							  '</label>'+
+							  
+							  '<label class="btn btn-info buttons-copy buttons-html5">'+
+								'<input type="checkbox" name="alkyl-amine" id="tag3" autocomplete="off" > Alkyl-amine'+
+							  '</label>'+
+							  
+							  '<label class="btn btn-info buttons-copy buttons-html5">'+
+								'<input type="checkbox" name="aromatic amine" id="tag4" autocomplete="off" > Aromatic amine'+
+							  '</label>'+
+							  
+							  '<label class="btn btn-info buttons-copy buttons-html5">'+
+								'<input type="checkbox" name="aromatic nitrogen" id="tag5" autocomplete="off"> Aromatic nitrogen'+
+							  '</label>'+
+							  
+							  '<label class="btn btn-info buttons-copy buttons-html5">'+
+								'<input type="checkbox" name="basic nitrogen" id="tag6" autocomplete="off"> Basic nitrogen'+
+							  '</label>'+
+							  
+							  '<label class="btn btn-info buttons-copy buttons-html5">'+
+								'<input type="checkbox" name="acidic oxygen" id="tag7" autocomplete="off"> Acidic oxygen'+
+							  '</label>'+
+							'</div>');
+							
+
 	
+
+
+
 	$('#cpedbtable tbody').on('click', 'td.details-control', function () {
         var tr = $(this).closest('tr');
         var row = table.row( tr );
@@ -329,19 +394,51 @@
         else {
             // Open this row
             row.child( format(row.data()) ).show();
+			SmilesDrawer.apply({
+								width: 300,
+								height: 200,}
+							  );
             tr.addClass('shown');
         }
     } );
 	
-
-    $('button').on('mousedown', function(){
-      $('[data-toggle="tooltip"]').tooltip('hide');
-    });
-    $('[data-toggle="tooltip"]').on('mouseleave', function(){
-      $('[data-toggle="tooltip"]').tooltip('hide');
-    });
+	
+	$('input:checkbox').change( function() {
+        table.draw();
+    } );
 	
 } );
+
+$.fn.dataTable.ext.search.push(
+    function( settings, data, dataIndex ) {
+        var tag1 =  data[21]  ;
+		var tag2 =  data[22]  ;
+		var tag3 =  data[23]  ;
+		var tag4 =  data[24]  ;
+		var tag5 =  data[25]  ;
+		var tag6 =  data[26]  ;
+		var tag7 =  data[27]  ;
+		var tag1_state=$('#tag1')[0].checked ;
+		var tag2_state=$('#tag2')[0].checked;
+		var tag3_state=$('#tag3')[0].checked;
+		var tag4_state=$('#tag4')[0].checked;
+		var tag5_state=$('#tag5')[0].checked;
+		var tag6_state=$('#tag6')[0].checked;
+		var tag7_state=$('#tag7')[0].checked;
+        if (  (((tag1!='') & tag1_state ) == tag1_state) &
+			  (((tag2!='') & tag2_state ) == tag2_state) &
+			  (((tag3!='') & tag3_state ) == tag3_state) &
+			  (((tag4!='') & tag4_state ) == tag4_state) &
+			  (((tag5!='') & tag5_state ) == tag5_state) &
+			  (((tag6!='') & tag6_state ) == tag6_state) &
+			  (((tag7!='') & tag7_state ) == tag7_state))
+        {	
+			
+            return true;
+        }
+        return false;
+    }
+);
 
 
 	

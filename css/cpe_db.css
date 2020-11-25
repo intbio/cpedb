@@ -15,9 +15,9 @@ tr.shown td.details-control {
 
 
 .tooltip-inner{
-    max-width:200px;
+
     padding:1px 1px;
-    background-color:#AAAAAA;
+    background-color:#EEEEEE;
     text-align:center;
     text-decoration:none;
 
@@ -25,7 +25,7 @@ tr.shown td.details-control {
 }
 
 .tooltip.bottom .tooltip-arrow{
-	border-bottom-color:#AAAAAA;
+	border-bottom-color:#EEEEEE;
 }
 
 .dt-button-collection{
