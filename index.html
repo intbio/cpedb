@@ -98,6 +98,7 @@
 				<th>tag7</th>
 				<th>SCAFFOLD name</th>
 				<th>Scaffold SMILES</th>
+				<th>DOI</th>
             </tr>
         </thead>
 		<tfoot>
@@ -132,6 +133,7 @@
 				<th>tag7</th>
 				<th>SCAFFOLD name</th>
 				<th>Scaffold SMILES</th>
+				<th>DOI</th>
             </tr>
         </tfoot>
     </table>
@@ -223,7 +225,7 @@
 		
 		'<tr>'+
             '<td><b>Reference:</b></td>'+
-            '<td colspan="5">'+d.Reference+'</td>'+
+            '<td colspan="5">'+"<a href='https://doi.org/" + d.DOI + "'>" + d.Reference + "</a>"+'</td>'+
         '</tr>'+
     '</table>';
 }
@@ -232,7 +234,7 @@
 	
 	
     var table =$('#cpedbtable').DataTable( {
-        "ajax": "data/db_21.12.2020.json",
+        "ajax": "data/db_22.12.2020.json",
         "columns": [
 			{
 				className:      'details-control',
@@ -268,7 +270,8 @@
 			{ "data": "tag6" },
 			{ "data": "tag7" },
 			{ "data": "tag8 (SCAFFOLD name)" },
-			{ "data": "Scaffold SMILES" }
+			{ "data": "Scaffold SMILES" },
+			{ "data": "DOI" }
         ],
 		"aaSorting": [],
 		"rowReorder": true,
@@ -334,7 +337,7 @@
 							}
 						},
 						{
-							"targets": [5,7,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29],
+							"targets": [5,7,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30],
 							"visible": false,
 							"searchable": true
 						}
